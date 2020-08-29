@@ -30,5 +30,6 @@ update_info = {
 # Build
 # update_info = {
 #   'token': bot_token_build,
-#   'use_context': True
+#   'use_context': True,
+#   'persistence': bot_persistence
 # }
