@@ -1,6 +1,7 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 import re
 from utils.api_method import delete, like, unlike
+from utils.persistence import bot_persistence
 
 
 def request_username(update, context):
@@ -101,6 +102,7 @@ def cancel_quit(update, context):
 def confirm_quit(update, context):
   END = -1
   context.user_data.clear()
+  bot_persistence.flush()
   bot = context.bot
   query = update.callback_query
   bot.edit_message_text(
