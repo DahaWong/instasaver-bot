@@ -1,5 +1,4 @@
 from telegram.ext import ConversationHandler, CallbackQueryHandler
-from enum import IntEnum
 from handlers.command import start_handler, quit_handler
 from handlers.callbackquery import login_confirm_handler, quit_cancel_handler, quit_confirm_handler, like_link_handler, delete_link_handler, unlike_link_handler
 from handlers.message import password_handler, username_handler, link_handler

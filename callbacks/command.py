@@ -14,6 +14,9 @@ def start(update, context):
         )
         return USERNAME
     else:
+        update.message.reply_text(
+            '您已登录成功，可以直接使用！'
+        )
         context.bot.delete_message(
             update.message.chat_id,
             update.message.message_id
