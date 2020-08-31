@@ -2,18 +2,20 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 import re
 from utils.api_method import delete, like, unlike
 from utils.persistence import bot_persistence
+import utils.delete_message as del_msg
 
 
 def request_username(update, context):
   PASSWORD = 1
   bot = context.bot
   query = update.callback_query
-  bot.edit_message_text(
+  msg = bot.edit_message_text(
       chat_id=query.message.chat_id,
       message_id=query.message.message_id,
       text="请输入<strong>用户名</strong>或者<strong>邮箱</strong>：",
       parse_mode='HTML'
   )
+  del_msg.later(update, context, msg)
   return PASSWORD
 
 
@@ -107,9 +109,10 @@ def confirm_quit(update, context):
   bot_persistence.flush()
   bot = context.bot
   query = update.callback_query
-  bot.edit_message_text(
+  msg = bot.edit_message_text(
       chat_id=query.message.chat_id,
       message_id=query.message.message_id,
       text='解绑成功！'
   )
+  del_msg.later(update, context, msg, timeup=4)
   return END

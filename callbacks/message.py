@@ -2,11 +2,13 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from utils.persistence import bot_persistence
 import re
 from utils.api_method import get_client, save
+import utils.delete_message as del_msg
 
 VERIFY = 2
 def request_password(update, context):
   context.user_data['username'] = update.message.text # 记录使用者的 Instapaper 登录名（username）
-  update.message.reply_text('请输入密码：')
+  msg = update.message.reply_text('请输入密码：')
+  del_msg.later(update, context, msg)
   return VERIFY
 
 
@@ -19,11 +21,12 @@ def verify_login(update, context):
   if get_client(context.user_data):
     context.user_data['client'] = get_client(context.user_data)
     bot_persistence.flush()
-    bot.edit_message_text(
+    msg = bot.edit_message_text(
       chat_id = message.chat_id,
       message_id = message.message_id,
       text = '登入成功！试试发送带链接的消息'
     ) 
+    del_msg.later(update, context, msg)
     context.user_data['logged_in'] = True 
     context.user_data['today'] = {} # Initialization
     return END
@@ -31,12 +34,13 @@ def verify_login(update, context):
   else:
     keyboard = [[InlineKeyboardButton("重新尝试",callback_data = 'login_confirm')]]
     markup = InlineKeyboardMarkup(keyboard)
-    bot.edit_message_text(
+    msg = bot.edit_message_text(
       chat_id = message.chat_id,
       message_id = message.message_id,
       text = '抱歉，未登入成功。',
       reply_markup = markup
     ) 
+    del_msg.later(update, context, msg)
     context.user_data.pop('username')
     context.user_data.pop('password')
     return USERNAME
@@ -52,7 +56,8 @@ def save_link(update, context):
       titles = {}
       # pattern_ignore = r'https://readhacker\.news/c/.+'
       if not links:
-        update.message.reply_text('消息中没有发现链接。')
+        msg = update.message.reply_text('消息中没有发现链接。')
+        del_msg.later(update, context, msg, timeup=5)
       else:
         supported_iv = {r"http[s]?://liqi\.io/":"7610e8062aab10",
                         r"http[s]?://m\.qdaily\.com/mobile/articles/.+":"19c55d0f6b1acb",
@@ -99,13 +104,15 @@ def save_link(update, context):
 
         if count:
           failed_saving = f"另有 {failed} 篇未能保存。" if failed else ""
-          context.bot.edit_message_text(
+          msg = context.bot.edit_message_text(
             chat_id = message_saving.chat.id,
             message_id = message_saving.message_id,
             text = f"成功保存 {count} 篇文章!\n"+ failed_saving
           )
+          del_msg.later(update, context, msg)
         else:
-          update.message.reply_text("未能成功保存 :(")
+          msg = update.message.reply_text("未能成功保存 :(")
+          del_msg.later(update, context, msg)
 
         # Return articles as preview messages
         for link in links:
@@ -127,4 +134,5 @@ def save_link(update, context):
             parse_mode='MARKDOWN'
           )
   else:
-    update.message.reply_text('你还没有登入呢。\n前往：/start')
+    msg = update.message.reply_text('你还没有登入呢。\n前往：/start')
+    del_msg.later(update, context, msg)

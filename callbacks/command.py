@@ -1,4 +1,5 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+import utils.delete_message as del_msg
 from utils.persistence import bot_persistence
 import datetime
 
@@ -11,21 +12,19 @@ def start(update, context):
             InlineKeyboardButton("登 入", callback_data='login_confirm')]
         ]
         markup = InlineKeyboardMarkup(keyboard_lan)
-        update.message.reply_text(
+        message = update.message.reply_text(
             '欢迎使用 Instasaver！\n开始使用前，请先登录您的账号。', 
             reply_markup=markup
         )
+        del_msg.later(update, context, message)
         return USERNAME
     else:
-        update.message.reply_text(
+        message = update.message.reply_text(
             '您已登录成功，可以直接使用！'
         )
+        del_msg.later(update, context, message)
         context.user_data['today'] = {} # Initialization
         bot_persistence.flush()
-        context.bot.delete_message(
-            update.message.chat_id,
-            update.message.message_id
-        )
         return END
 
 def quit_(update, context):
@@ -38,10 +37,11 @@ def quit_(update, context):
             ]
         ]
         markup = InlineKeyboardMarkup(keyboard)
-        update.message.reply_text(
+        message = update.message.reply_text(
                 '确认解绑账号吗？', 
                 reply_markup=markup
             )
+        del_msg.later(update, context, message)
         return CONFIRM_QUIT
     else:
         update.message.reply_text("你还没有登入呢。\n前往：/start")
@@ -64,7 +64,7 @@ def today(update, context):
                     count += 1
                     title, link = article['title'], article['link']
                     message_body += f"{count}\. [{title}]({link})\n\n"
-                context.bot.send_message(
+                msg = context.bot.send_message(
                     chat_id=message.chat_id,
                     message_id=message.message_id,
                     text=message_body,
@@ -72,8 +72,11 @@ def today(update, context):
                     disable_web_page_preview=True,
                     reply_to_message_id=message.message_id
                 )
+                del_msg.later(update, context, msg)
             else:
-                message.reply_text('今天还没有保存文章呢')
+                msg = message.reply_text('今天还没有保存文章呢')
+                del_msg.later(update, context, msg, timeup=5)
+                
     else:
         update.delete_message(
             message.chat_id,
@@ -84,4 +87,5 @@ def about(update, context):
     keyboard = [[InlineKeyboardButton("源 代 码", url='https://github.com/dahawong/instasaver'),
                  InlineKeyboardButton("工 作 室", url='https://office.daha.me/')]]
     markup = InlineKeyboardMarkup(keyboard)
-    update.message.reply_html('<strong>Instasaver</strong> v2.0.1', reply_markup=markup)
+    msg = update.message.reply_html('<strong>Instasaver</strong> v2.0.1', reply_markup=markup)
+    del_msg.later(update, context, msg)
