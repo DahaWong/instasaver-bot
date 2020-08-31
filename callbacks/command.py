@@ -1,4 +1,7 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from utils.persistence import bot_persistence
+import datetime
+
 def start(update, context):
     USERNAME = 0
     END = -1
@@ -17,6 +20,8 @@ def start(update, context):
         update.message.reply_text(
             '您已登录成功，可以直接使用！'
         )
+        context.user_data['today'] = {} # Initialization
+        bot_persistence.flush()
         context.bot.delete_message(
             update.message.chat_id,
             update.message.message_id
@@ -43,16 +48,36 @@ def quit_(update, context):
         return END
 
 def today(update, context):
+    message = update.message
+    today = datetime.date.today() + datetime.timedelta(hours=8)
+    year, month, day = today.year, today.month, today.day
     if context.user_data.__contains__('logged_in'):
-        message_body = ''
-        articles_today = context.user_data['today']
-        for article in articles_today:
-            message_body += f"《[{article}]({article['link']})》\n"
-        update.message.reply_markdown(message_body)
+        if not context.user_data.__contains__('today'):
+            context.user_data['today'] = {}
+            bot_persistence.flush()
+        else:
+            message_body = f'`{year}\-{month}\-{day}`\n\n'
+            articles_today = context.user_data['today'].values()
+            if articles_today:
+                count = 0
+                for article in articles_today:
+                    count += 1
+                    title, link = article['title'], article['link']
+                    message_body += f"{count}\. [{title}]({link})\n\n"
+                context.bot.send_message(
+                    chat_id=message.chat_id,
+                    message_id=message.message_id,
+                    text=message_body,
+                    parse_mode="MarkdownV2",
+                    disable_web_page_preview=True,
+                    reply_to_message_id=message.message_id
+                )
+            else:
+                message.reply_text('今天还没有保存文章呢')
     else:
         update.delete_message(
-            update.message.chat_id,
-            update.message.message_id
+            message.chat_id,
+            message.message_id
         )
 
 def about(update, context):

@@ -20,6 +20,13 @@ def request_username(update, context):
 def delete_link(update, context):
   bot = context.bot
   message = update.callback_query.message
+  data = update.callback_query.data
+  client = context.user_data['client']
+  pattern = '(delete_)([0-9]+)'
+  bookmark_id = re.match(pattern, data).group(2)
+  delete(client, bookmark_id)
+  context.user_data['today'].pop(bookmark_id)
+  bot_persistence.flush()
   bot.delete_message(
     chat_id = message.chat_id,
     message_id = message.message_id
@@ -28,11 +35,6 @@ def delete_link(update, context):
     update.callback_query.id,
     '已删除～'
   )
-  data = update.callback_query.data
-  client = context.user_data['client']
-  pattern = '(delete_)([0-9]+)'
-  bookmark_id = re.match(pattern, data).group(2)
-  delete(client, bookmark_id)
 
 
 def like_link(update, context):

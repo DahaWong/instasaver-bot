@@ -90,6 +90,13 @@ def save_link(update, context):
               )
           else:
             failed += 1
+
+          context.user_data['today'][str(bookmark_id)] = {
+            'title': title, 
+            'link': link
+          }
+          bot_persistence.flush()
+
         if count:
           failed_saving = f"另有 {failed} 篇未能保存。" if failed else ""
           context.bot.edit_message_text(
@@ -112,14 +119,12 @@ def save_link(update, context):
           if can_iv(link):
             rhash = supported_iv[can_iv(link)]
             link = use_iv(rhash)
-          preview_message = update.message.reply_text(
+          context.bot.send_message(
+            chat_id=update.message.chat_id,
+            message_id=update.message.message_id,
             text=f"[{title}]({link})",
             reply_markup=markup, 
             parse_mode='MARKDOWN'
           )
-          context.user_data['today'][title] = {
-            'bookmark_id': bookmark_id, 
-            'link': preview_message.link
-          }
   else:
     update.message.reply_text('你还没有登入呢。\n前往：/start')
