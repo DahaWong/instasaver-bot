@@ -15,6 +15,7 @@ You can also delete/star your saved articles easily.
 ### Commands
 - `/start`: Start the bot to log in.
 - `/quit`: Log out.
+- `/today`: Show articles saved today.
 - `/about`: About the bot.
 
 ### Host Yourself
