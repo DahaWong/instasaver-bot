@@ -24,7 +24,8 @@ def verify_login(update, context):
       message_id = message.message_id,
       text = '登入成功！试试发送带链接的消息'
     ) 
-    context.user_data['logged_in'] = True
+    context.user_data['logged_in'] = True 
+    context.user_data['today'] = {} # Initialization
     return END
 
   else:
@@ -72,6 +73,8 @@ def save_link(update, context):
         failed = 0
         illegal_end = [")","(","!","."]
         message_saving = update.message.reply_text(f"保存中 …")
+
+        # Start saving
         for link in links:
           if link[-1] in illegal_end:
             link = link.strip(f"{link[-1]}")
@@ -96,6 +99,8 @@ def save_link(update, context):
           )
         else:
           update.message.reply_text("未能成功保存 :(")
+
+        # Return articles as preview messages
         for link in links:
           bookmark_id = link_ids[link]
           title = titles[bookmark_id]
@@ -107,10 +112,14 @@ def save_link(update, context):
           if can_iv(link):
             rhash = supported_iv[can_iv(link)]
             link = use_iv(rhash)
-          update.message.reply_text(
+          preview_message = update.message.reply_text(
             text=f"[{title}]({link})",
             reply_markup=markup, 
             parse_mode='MARKDOWN'
-          )  
+          )
+          context.user_data['today'][title] = {
+            'bookmark_id': bookmark_id, 
+            'link': preview_message.link
+          }
   else:
     update.message.reply_text('你还没有登入呢。\n前往：/start')

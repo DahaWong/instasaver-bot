@@ -42,6 +42,19 @@ def quit_(update, context):
         update.message.reply_text("你还没有登入呢。\n前往：/start")
         return END
 
+def today(update, context):
+    if context.user_data.__contains__('logged_in'):
+        message_body = ''
+        articles_today = context.user_data['today']
+        for article in articles_today:
+            message_body += f"《[{article}]({article['link']})》\n"
+        update.message.reply_markdown(message_body)
+    else:
+        update.delete_message(
+            update.message.chat_id,
+            update.message.message_id
+        )
+
 def about(update, context):
     keyboard = [[InlineKeyboardButton("源 代 码", url='https://github.com/dahawong/instasaver'),
                  InlineKeyboardButton("工 作 室", url='https://office.daha.me/')]]
