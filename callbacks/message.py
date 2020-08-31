@@ -57,7 +57,7 @@ def save_link(update, context):
       # pattern_ignore = r'https://readhacker\.news/c/.+'
       if not links:
         msg = update.message.reply_text('消息中没有发现链接。')
-        del_msg.later(update, context, msg, timeup=5)
+        del_msg.later(update, context, msg, timeup=2)
       else:
         supported_iv = {r"http[s]?://liqi\.io/":"7610e8062aab10",
                         r"http[s]?://m\.qdaily\.com/mobile/articles/.+":"19c55d0f6b1acb",

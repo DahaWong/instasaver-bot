@@ -44,7 +44,8 @@ def quit_(update, context):
         del_msg.later(update, context, message)
         return CONFIRM_QUIT
     else:
-        update.message.reply_text("你还没有登入呢。\n前往：/start")
+        message = update.message.reply_text("你还没有登入呢。\n前往：/start")
+        del_msg.later(update, context, message)
         return END
 
 def today(update, context):
@@ -75,13 +76,10 @@ def today(update, context):
                 del_msg.later(update, context, msg)
             else:
                 msg = message.reply_text('今天还没有保存文章呢')
-                del_msg.later(update, context, msg, timeup=5)
-                
+                del_msg.later(update, context, msg, timeup=2)     
     else:
-        update.delete_message(
-            message.chat_id,
-            message.message_id
-        )
+        message = update.message.reply_text("你还没有登入呢。\n前往：/start")
+        del_msg.later(update, context, message)
 
 def about(update, context):
     keyboard = [[InlineKeyboardButton("源 代 码", url='https://github.com/dahawong/instasaver'),

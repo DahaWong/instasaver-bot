@@ -114,5 +114,5 @@ def confirm_quit(update, context):
       message_id=query.message.message_id,
       text='解绑成功！'
   )
-  del_msg.later(update, context, msg, timeup=4)
+  del_msg.later(update, context, msg, timeup=2)
   return END
