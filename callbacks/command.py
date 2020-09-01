@@ -1,6 +1,7 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 import utils.delete_message as del_msg
 from utils.persistence import bot_persistence
+from utils.date import get_today,is_today
 import datetime
 
 def start(update, context):
@@ -23,8 +24,6 @@ def start(update, context):
             '您已登录成功，可以直接使用！'
         )
         del_msg.later(update, context, message)
-        context.user_data['today'] = {} # Initialization
-        bot_persistence.flush()
         return END
 
 def quit_(update, context):
@@ -53,13 +52,14 @@ def today(update, context):
     today = datetime.date.today() + datetime.timedelta(hours=8)
     year, month, day = today.year, today.month, today.day
     if context.user_data.__contains__('logged_in'):
-        if not context.user_data.__contains__('today'):
-            context.user_data['today'] = {}
+        if not is_today(context.user_data['today']['date']):
+            context.user_data['today'].clear()
+            context.user_data['today']['date'] = get_today()
             bot_persistence.flush()
         else:
             message_body = f'`{year}\-{month}\-{day}`\n\n'
-            articles_today = context.user_data['today'].values()
-            if articles_today:
+            articles_today = filter(lambda x: not isinstance(x,datetime.date), context.user_data['today'].values())
+            if list(articles_today):
                 count = 0
                 for article in articles_today:
                     count += 1
@@ -82,8 +82,8 @@ def today(update, context):
         del_msg.later(update, context, message)
 
 def about(update, context):
-    keyboard = [[InlineKeyboardButton("源 代 码", url='https://github.com/dahawong/instasaver'),
-                 InlineKeyboardButton("工 作 室", url='https://office.daha.me/')]]
+    keyboard = [[InlineKeyboardButton("源    代    码", url='https://github.com/dahawong/instasaver')],
+                [InlineKeyboardButton("工    作    室", url='https://office.daha.me/')]]
     markup = InlineKeyboardMarkup(keyboard)
-    msg = update.message.reply_html('<strong>Instasaver</strong> v2.0.2', reply_markup=markup)
+    msg = update.message.reply_markdown('*Instasaver*  `v2.0.3`', reply_markup=markup)
     del_msg.later(update, context, msg)

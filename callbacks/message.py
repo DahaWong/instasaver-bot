@@ -3,6 +3,7 @@ from utils.persistence import bot_persistence
 import re
 from utils.api_method import get_client, save
 import utils.delete_message as del_msg
+from utils.date import is_today, get_today
 
 VERIFY = 2
 def request_password(update, context):
@@ -28,7 +29,10 @@ def verify_login(update, context):
     ) 
     del_msg.later(update, context, msg)
     context.user_data['logged_in'] = True 
-    context.user_data['today'] = {} # Initialization
+    if not context.user_data.__contains__('today'):
+      context.user_data['today'] = {} # Initialization
+    context.user_data['today']['date'] = get_today()
+    bot_persistence.flush()
     return END
 
   else:
@@ -96,10 +100,14 @@ def save_link(update, context):
           else:
             failed += 1
 
-          context.user_data['today'][str(bookmark_id)] = {
-            'title': title, 
-            'link': link
-          }
+          if is_today(context.user_data['today']['date']):
+            context.user_data['today'][str(bookmark_id)] = {
+              'title': title, 
+              'link': link
+            }
+          else:
+            context.user_data['today'].clear()
+            context.user_data['today']['date'] = get_today()
           bot_persistence.flush()
 
         if count:
@@ -133,6 +141,8 @@ def save_link(update, context):
             reply_markup=markup, 
             parse_mode='MARKDOWN'
           )
+
+        
   else:
     msg = update.message.reply_text('你还没有登入呢。\n前往：/start')
     del_msg.later(update, context, msg)
