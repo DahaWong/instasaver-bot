@@ -1,5 +1,5 @@
 # Instasaver
-> v2.0.3
+> v2.0.4
 ## Intro
 A [Telegram Bot](https://core.telegram.org/bots/api) for sending links to Instapaper conveniently.
 
