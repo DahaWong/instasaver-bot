@@ -85,5 +85,5 @@ def about(update, context):
     keyboard = [[InlineKeyboardButton("源    代    码", url='https://github.com/dahawong/instasaver')],
                 [InlineKeyboardButton("工    作    室", url='https://office.daha.me/')]]
     markup = InlineKeyboardMarkup(keyboard)
-    msg = update.message.reply_markdown('*Instasaver*  `v2.0.3`', reply_markup=markup)
+    msg = update.message.reply_markdown('*Instasaver*  `2.0.3`', reply_markup=markup)
     del_msg.later(update, context, msg)

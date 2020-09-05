@@ -4,12 +4,13 @@ import re
 from utils.api_method import get_client, save
 import utils.delete_message as del_msg
 from utils.date import is_today, get_today
+from utils.crypto import generate_token
 
 VERIFY = 2
 def request_password(update, context):
   context.user_data['username'] = update.message.text # 记录使用者的 Instapaper 登录名（username）
   msg = update.message.reply_text('请输入密码：')
-  del_msg.later(update, context, msg)
+  del_msg.later(update, context, msg, timeup=120)
   return VERIFY
 
 
@@ -17,7 +18,8 @@ def verify_login(update, context):
   END = -1
   USERNAME = 0
   bot = context.bot
-  context.user_data['password'] = update.message.text # 记录使用者的 Instapaper 密码（password）
+  password = update.message.text
+  context.user_data['password'] = generate_token(password) # 记录使用者的 Instapaper 密码（password）
   message = update.message.reply_text('登入中，请稍候…')
   if get_client(context.user_data):
     context.user_data['client'] = get_client(context.user_data)

@@ -15,7 +15,7 @@ def request_username(update, context):
       text="请输入<strong>用户名</strong>或者<strong>邮箱</strong>：",
       parse_mode='HTML'
   )
-  del_msg.later(update, context, msg)
+  del_msg.later(update, context, msg, timeup=120)
   return PASSWORD
 
 

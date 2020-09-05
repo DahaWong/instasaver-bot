@@ -15,21 +15,23 @@ proxy = config['BOT']['PROXY']
 oauth_consumer_id = config['OAUTH']['CONSUMER_ID']
 oauth_consumer_secret = config['OAUTH']['CONSUMER_SECRET']
 
+# Encrypt
+encrypt_key = config['ENCRYPT']['KEY']
 
 # Test(with proxy)
-update_info = {
-  'token': bot_token_test,
-  'use_context': True,
-  'request_kwargs': {
-    'proxy_url':proxy
-  },
-  'persistence': bot_persistence
-}
+# update_info = {
+#   'token': bot_token_test,
+#   'use_context': True,
+#   'request_kwargs': {
+#     'proxy_url':proxy
+#   },
+#   'persistence': bot_persistence
+# }
 
 
 # Build
-# update_info = {
-#   'token': bot_token,
-#   'use_context': True,
-#   'persistence': bot_persistence
-# }
+update_info = {
+  'token': bot_token,
+  'use_context': True,
+  'persistence': bot_persistence
+}

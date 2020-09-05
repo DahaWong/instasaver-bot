@@ -3,6 +3,7 @@ import urllib
 import oauth2 as oauth
 import json
 import ast
+from utils.crypto import decrypt_token
 
 root = 'https://www.instapaper.com/'
 apis = {
@@ -19,7 +20,7 @@ apis = {
 def get_client(data):
   consumer = oauth.Consumer(oauth_consumer_id, oauth_consumer_secret)
   client = oauth.Client(consumer)
-  client.add_credentials(data['username'], data['password'])
+  client.add_credentials(data['username'], decrypt_token(data['password']))
   client.authorizations
 
   params = {
