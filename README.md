@@ -3,8 +3,8 @@
 A [Telegram Bot](https://core.telegram.org/bots/api) for sending links to Instapaper conveniently.
 
 ## Use
-Here is [the link](https://t.me/saveinstapaper_bot).
-Chinese version only.
+Here is [the link of bot](https://t.me/saveinstapaper_bot).
+Chinese version only by now.
 
 ### Basics
 After `/start` the bot, he will ask you to log in Instapaper account. Once logged in, you can send messages with links to the bot, then the article links can automatically be found and saved.
