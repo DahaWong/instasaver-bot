@@ -18,6 +18,12 @@ oauth_consumer_secret = config['OAUTH']['CONSUMER_SECRET']
 # Encrypt
 encrypt_key = config['ENCRYPT']['KEY']
 
+#Database:
+mongo_user = config['MONGODB']['USER']
+mongo_pwd = config['MONGODB']['PWD']
+mongo_ip = config['MONGODB']['IP']
+mongodb_uri = f"mongodb://{mongo_user}:{mongo_pwd}@{mongo_ip}/instasaver"
+
 # Test(with proxy)
 # update_info = {
 #   'token': bot_token_test,
