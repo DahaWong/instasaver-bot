@@ -82,7 +82,7 @@ def today(update, context):
         del_msg.later(update, context, message)
 
 def about(update, context):
-    keyboard = [[InlineKeyboardButton("源    代    码", url='https://github.com/dahawong/instasaver')],
+    keyboard = [[InlineKeyboardButton("源    代    码", url='https://github.com/dahawong/instasaver-bot')],
                 [InlineKeyboardButton("工    作    室", url='https://office.daha.me/')]]
     markup = InlineKeyboardMarkup(keyboard)
     msg = update.message.reply_markdown('*Instasaver*  `2.0.4`', reply_markup=markup)
